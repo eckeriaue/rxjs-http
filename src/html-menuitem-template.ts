@@ -1,11 +1,11 @@
-export default function ({userId, title, completed}: {userId: number, title: string, completed: boolean}) {
+export default function ({ title, id, completed}: { title: string, id: number, completed: boolean}) {
   return /*html*/`
   <div class="flex justify-between">
     <div class="flex items-center gap-x-2">
-      <span>${userId}</span>
-      <span class="truncate" style="max-width: 320px">${title}</span>
+      <span>${id}</span>
+      <span class="truncate ${completed && 'line-through'}" style="max-width: 320px">${title}</span>
     </div>
-    <span>${completed ? 'done' : 'await complete'}</span>
+    <span class="${completed && 'alert-success'}">${completed ? 'done' : 'await complete'}</span>
   </div>
 `
 }

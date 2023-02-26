@@ -78,10 +78,10 @@ new class App {
     this.$http.get('/todos').subscribe(result => {
       interval(1000).pipe(
         take((result as object[]).length),
-        switchMap(index => of((result as {userId: number, title: string, completed: boolean}[])[index])),
-        map(({userId, title, completed}) => {
+        switchMap(index => of((result as {id: number, userId: number, title: string, completed: boolean}[])[index])),
+        map(({title, completed, id}) => {
           const li = document.createElement('li')
-          li.innerHTML = liHTML({userId, title, completed})
+          li.innerHTML = liHTML({title, completed, id})
           return li
         })
       ).subscribe({
