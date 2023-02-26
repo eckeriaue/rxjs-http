@@ -1,4 +1,4 @@
-export default function ({ title, id, completed}: { title: string, id: number, completed: boolean}): HTMLLIElement {
+export default function ({title, id, completed}: {title: string, id: number, completed: boolean}): HTMLLIElement {
   const content = /*html*/`
     <div class="flex justify-between">
       <div class="flex items-center gap-x-2">
