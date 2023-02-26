@@ -1,4 +1,4 @@
-import { interval, map } from "rxjs"
+import { interval, map, take } from "rxjs"
 import Http from "./Http"
 import { switchMap } from "rxjs/internal/operators/switchMap"
 import liHTML from './html-menuitem-template'
@@ -86,6 +86,7 @@ new class App {
 
   private GET_TODOS = this.$http.get('/todos').pipe( 
     switchMap(todo => interval(1000).pipe(
+      take((todo as iTodoItem[]).length),
       map((index: number) => (todo as iTodoItem[])[index])
     )),
     map(todo => liHTML(todo))
