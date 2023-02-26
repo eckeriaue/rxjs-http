@@ -82,7 +82,7 @@ new class App {
    * push item every second
   */
   private GET_TODOS = this.$http.get('/todos').pipe( 
-    switchMap(todo => interval(1000).pipe(
+    switchMap(todo => interval(500).pipe(
       take((todo as iTodoItem[]).length),
       map((index: number) => (todo as iTodoItem[])[index])
     )),
