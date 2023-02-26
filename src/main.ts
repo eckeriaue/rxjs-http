@@ -1,4 +1,4 @@
-import { of, timer, interval, from, map } from "rxjs"
+import { interval, map } from "rxjs"
 import Http from "./Http"
 import { switchMap } from "rxjs/internal/operators/switchMap"
 import { take } from "rxjs/internal/operators/take"
