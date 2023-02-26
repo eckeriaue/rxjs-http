@@ -74,7 +74,7 @@ new class App {
     this.GET_TODOS.subscribe({
       next: todoItem => this.menu.appendChild(todoItem),
       error: e => console.error(e),
-      complete: () => console.log('todos done')
+      complete: () => this.menu.appendChild(document.createTextNode('todos done'))
     })
   }
 
@@ -82,7 +82,7 @@ new class App {
    * push item every second
   */
   private GET_TODOS = this.$http.get('/todos').pipe( 
-    switchMap(todo => interval(500).pipe(
+    switchMap(todo => interval(200).pipe(
       take((todo as iTodoItem[]).length),
       map((index: number) => (todo as iTodoItem[])[index])
     )),
