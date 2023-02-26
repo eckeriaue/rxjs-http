@@ -64,7 +64,6 @@ new class App {
   private menu = document.createElement('menu') as HTMLMenuElement
   private $http = new Http
 
-  list = []
   constructor() {
     this.app.appendChild(this.menu)
     Object.assign(this.menu.style, {
