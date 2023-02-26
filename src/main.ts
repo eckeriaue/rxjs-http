@@ -1,8 +1,7 @@
-import { interval, map } from "rxjs"
+import { from, interval, map, of, scan } from "rxjs"
 import Http from "./Http"
 import { switchMap } from "rxjs/internal/operators/switchMap"
 import { take } from "rxjs/internal/operators/take"
-
 /**
  * this methodology assumes use ONLY IN THE CORE of the project
  * for easier interaction!
@@ -62,32 +61,41 @@ new class App {
   list = []
   constructor() {
     this.app.appendChild(this.menu)
-    this.getListAsHTMLLiItems(this.menu)
+    Object.assign(this.menu.style, {
+      maxWidth: '685px',
+      margin: '0 auto'
+    })
+    this.menu.classList.add('menu')
+    this.GET_TODOS(this.menu)
   }
 
   
   /**
    * push item every second
-   * )
   */
-  private getListAsHTMLLiItems(to: HTMLMenuElement) {
-    const stream$ = interval(1000).pipe(
-      take(20),
-      switchMap(index => {
-        return this.$http.get('/todos').pipe(
-          map(req => (req as {title: string}[])[index]),
-          map((item: {title: string}) => {
-            const li = document.createElement('li')
-            li.textContent = item.title
-            return li
-          })
-        )
-      }),
-    )
-    stream$.subscribe(li => to.appendChild(li))
-    /**
-     * by vue 
-     * stream$.subscribe(li => (list as Ref<string[]>).value.push(..li))
-    */
-  }
+ private GET_TODOS(to: HTMLMenuElement) {
+    this.$http.get('/todos').subscribe(result => {
+      interval(1000).pipe(
+        take((result as object[]).length),
+        switchMap(index => of((result as {userId: number, title: string, completed: boolean}[])[index])),
+        map(({userId, title, completed}) => {
+          const li = document.createElement('li')
+          li.innerHTML = /*html*/`
+            <div class="flex justify-between">
+              <div class="flex items-center gap-x-2">
+                <span>${userId}</span>
+                <span class="truncate" style="max-width: 320px">${title}</span>
+              </div>
+              <span>${completed ? 'done' : 'await complete'}</span>
+            </div>
+          `
+          return li
+        })
+      ).subscribe({
+        next: item => to.appendChild(item),
+        error: () => console.log('erorr'),
+        complete: () => console.log('done')
+      })
+    })
+ }
 }
