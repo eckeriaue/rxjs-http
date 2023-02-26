@@ -1,4 +1,5 @@
-import { map } from "rxjs"
+import { interval, map, take } from "rxjs"
+import { switchMap } from "rxjs/operators"
 import Http from "./Http"
 import liHTML from './html-menuitem-template'
 /**
@@ -53,12 +54,15 @@ import liHTML from './html-menuitem-template'
  * })
 */
 
-
+interface iTodoItem {
+  title: string
+  id: number
+  completed: boolean
+}
 new class App {
   private app = document.querySelector('#app') as HTMLElement
   private menu = document.createElement('menu') as HTMLMenuElement
-
-  $http = new Http
+  private $http = new Http
 
   constructor() {
     this.app.appendChild(this.menu)
@@ -67,13 +71,21 @@ new class App {
       margin: '0 auto'
     })
     this.menu.classList.add('menu')
-    this.$http.GET_TODOS.pipe(
-      // transofrm request
-      map(todo => liHTML(todo))
-    ).subscribe({
+    this.GET_TODOS.subscribe({
       next: todoItem => this.menu.appendChild(todoItem),
       error: e => console.error(e),
       complete: () => this.menu.appendChild(document.createTextNode('todos done'))
     })
   }
+
+  /**
+   * push item every second
+  */
+  private GET_TODOS = this.$http.get('/todos').pipe( 
+    switchMap(todo => interval(1000).pipe(
+      take((todo as iTodoItem[]).length),
+      map((index: number) => (todo as iTodoItem[])[index])
+    )),
+    map(todo => liHTML(todo))
+  )
 }
