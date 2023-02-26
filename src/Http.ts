@@ -1,6 +1,7 @@
 import { ajax } from 'rxjs/ajax'
-
-abstract class HttpConnect {
+import { interval, map, take } from "rxjs"
+import { switchMap } from "rxjs/operators"
+abstract class CRUD {
   constructor(
     readonly API: string
   ) {}
@@ -41,8 +42,24 @@ abstract class HttpConnect {
   }
 }
 
-export default class Http extends HttpConnect {
+
+interface iTodoItem {
+  title: string
+  id: number
+  completed: boolean
+}
+export default class HttpConnect extends CRUD {
   constructor() {
     super('https://jsonplaceholder.typicode.com')
   }
+
+  /**
+   * push item every second
+  */
+  readonly GET_TODOS = this.get('/todos').pipe(
+    switchMap(todo => interval(1000).pipe(
+      take((todo as iTodoItem[]).length),
+      map((index: number) => (todo as iTodoItem[])[index])
+    )),
+  )
 }
