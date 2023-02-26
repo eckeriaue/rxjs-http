@@ -1,7 +1,8 @@
-import { from, interval, map, of, scan } from "rxjs"
+import { interval, map, of } from "rxjs"
 import Http from "./Http"
 import { switchMap } from "rxjs/internal/operators/switchMap"
 import { take } from "rxjs/internal/operators/take"
+import liHTML from './html-menuitem-template'
 /**
  * this methodology assumes use ONLY IN THE CORE of the project
  * for easier interaction!
@@ -80,15 +81,7 @@ new class App {
         switchMap(index => of((result as {userId: number, title: string, completed: boolean}[])[index])),
         map(({userId, title, completed}) => {
           const li = document.createElement('li')
-          li.innerHTML = /*html*/`
-            <div class="flex justify-between">
-              <div class="flex items-center gap-x-2">
-                <span>${userId}</span>
-                <span class="truncate" style="max-width: 320px">${title}</span>
-              </div>
-              <span>${completed ? 'done' : 'await complete'}</span>
-            </div>
-          `
+          li.innerHTML = liHTML({userId, title, completed})
           return li
         })
       ).subscribe({
